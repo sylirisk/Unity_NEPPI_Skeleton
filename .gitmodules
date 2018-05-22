@@ -1,0 +1,3 @@
+[submodule "Assets/Scripts/uniwebserver"]
+	path = Assets/Scripts/uniwebserver
+	url = git@github.com:AaltoNEPPI/uniwebserver.git
