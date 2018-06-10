@@ -1,3 +1,6 @@
 [submodule "Assets/Scripts/uniwebserver"]
 	path = Assets/Scripts/uniwebserver
 	url = git@github.com:AaltoNEPPI/uniwebserver.git
+[submodule "Assets/Scripts/framework7"]
+	path = Assets/framework7
+	url = git@github.com:AaltoNEPPI/framework7.git
