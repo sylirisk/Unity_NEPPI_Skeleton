@@ -28,4 +28,20 @@ At this point this example project supports a simple built-in
 web-server.  For a (temporary) example, see the WebServer Game Object
 in the SampleScene Scene, in the `Assets/Scenes` folder.
 
+The web server is able to serve Framework7 based content, simply
+by adding the Framework7Component script to any game object.  The
+SampleScene has also the Framework7Component.
 
+Once you have the webserver running, you can access your local
+Framework7 kitchen sink at
+```
+   http://localhost:8079/fw7/kitchen-sink/index.html
+```
+
+Planned features
+================
+
+Make the Server tell you a non-localhost URL to use for access.
+Add a BLE component.
+Run the Web server as a background object, independent of game
+objects.
