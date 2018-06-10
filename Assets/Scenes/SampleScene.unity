@@ -260,6 +260,7 @@ GameObject:
   m_Component:
   - component: {fileID: 506183740}
   - component: {fileID: 506183739}
+  - component: {fileID: 506183742}
   - component: {fileID: 506183741}
   m_Layer: 0
   m_Name: WebServer
@@ -310,3 +311,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HTTPPath: /
   dataPath: /Scripts/uniwebserver/HTML/
+--- !u!114 &506183742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 506183738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f3ff0e7e4ecb41f98ed55d084b7fc2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HTTPPath: /fw7
+  dataPath: /framework7
+  indexPath: /kitchen-sink/index.html
