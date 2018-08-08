@@ -4,3 +4,6 @@
 [submodule "Assets/Scripts/framework7"]
 	path = Assets/framework7
 	url = git@github.com:AaltoNEPPI/framework7.git
+[submodule "Unity3D_BLE"]
+	path = Unity3D_BLE
+	url = git@github.com:AaltoNEPPI/Unity3D_BLE.git
