@@ -343,3 +343,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7090100b61cf64897b66436ebae0f66c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scanning: 0
+  serviceUUID: 
