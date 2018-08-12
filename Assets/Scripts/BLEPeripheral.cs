@@ -1,11 +1,19 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Runtime.InteropServices;
 
 public class BLEPeripheral : MonoBehaviour
 {
+    [DllImport ("Unity3D_BLE")]
+    private static extern void BLENativePeripheralSetService(
+	BLENativePeripheral native, string service);
+
     // XXX Pekka's iPhone on Pekka's Mac
-    public string identifier = "9504E2CA-6C5D-4951-9D88-62FD75E608B9";
+    public string device = "9504E2CA-6C5D-4951-9D88-62FD75E608B9";
+    public string service = "180F"; // Battery
+    // XXX Should have an array of characteristics
+    public string characteristic = "2a19"; // Battery level
 
     public bool connect = false;
     protected bool _connect;
@@ -42,12 +50,14 @@ public class BLEPeripheral : MonoBehaviour
 	    _connect = connect;
 	}
     }
+
     void PeripheralDiscovered(BLENativePeripheral p) {
-	// Log("Discovered " + identifier);
-	if (identifier == p.identifier) {
+	// Log("Discovered " + device);
+	if (device == p.identifier) {
 	    if (native == null) {
-		Log("Adapted " + identifier);
+		Log("Adapted " + device);
 		native = p;
+		BLENativePeripheralSetService(native, service);
 	    }
 	}
     }

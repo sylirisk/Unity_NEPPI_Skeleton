@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 506183742}
   - component: {fileID: 506183741}
   - component: {fileID: 506183743}
+  - component: {fileID: 506183744}
   m_Layer: 0
   m_Name: WebServer
   m_TagString: Untagged
@@ -345,3 +346,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scanning: 0
   serviceUUID: 
+--- !u!114 &506183744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 506183738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 677689c4fbfa542d5bf28ae9cc3c6bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  device: 9504E2CA-6C5D-4951-9D88-62FD75E608B9
+  service: 180F
+  characteristic: 2a19
+  connect: 0

@@ -4,30 +4,31 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.Runtime.CompilerServices;
 
 [StructLayout (LayoutKind.Sequential)]
-public class BLEContext : SafeHandleZeroOrMinusOneIsInvalid
+public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 {
     GCHandle gch;
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEInitialise(BLEContext self, IntPtr context);
+    private static extern void BLENativeInitialise(BLEManager self, IntPtr manager);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEDeInitialise(IntPtr native);
+    private static extern void BLENativeDeInitialise(IntPtr native);
 
     // Called by the runtime
-    public BLEContext() : base(true) {
+    public BLEManager() : base(true) {
     }
 
     public void Initialise(BLE cs) {
 	gch = GCHandle.Alloc(cs);
-	BLEInitialise(this, GCHandle.ToIntPtr(gch));
+	BLENativeInitialise(this, GCHandle.ToIntPtr(gch));
     }
 
     protected override bool ReleaseHandle() {
 	if (!this.IsInvalid) {
-	    BLEDeInitialise(handle);
+	    BLENativeDeInitialise(handle);
 	    handle = IntPtr.Zero;
 	}
         return true;
@@ -36,31 +37,33 @@ public class BLEContext : SafeHandleZeroOrMinusOneIsInvalid
 
 [StructLayout (LayoutKind.Sequential)]
 public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
-    public BLEContext context; // XXX Fix visibility
+    public BLEManager manager; // XXX Fix visibility
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEPeripheralGetIdentifier(
+    private static extern void BLENativePeripheralGetIdentifier(
 	IntPtr peripheral, StringBuilder identifier, int len);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEPeripheralGetName(
+    private static extern void BLENativePeripheralGetName(
 	IntPtr peripheral, StringBuilder name, int len);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEPeripheralRelease(IntPtr peripheral);
+    private static extern void BLENativePeripheralRelease(IntPtr peripheral);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern BLEConnection BLEConnect(
-	BLEContext context, BLENativePeripheral peripheral);
+    private static extern BLEConnection BLENativeConnect(
+	BLEManager manager, BLENativePeripheral peripheral);
 
-    // Called by the runtime when BLECreatePeripheral has returned
+    // Called by the runtime when BLENativeCreatePeripheral has returned
     public BLENativePeripheral() : base(true) {
+	Debug.Log("BLENativePeripheral: constructor " + this + ": " +
+		  RuntimeHelpers.GetHashCode(this));
     }
 
     public string identifier {
 	get {
 	    StringBuilder sb = new StringBuilder(256/*XXX*/);
-	    BLEPeripheralGetIdentifier(handle, sb, sb.Capacity);
+	    BLENativePeripheralGetIdentifier(handle, sb, sb.Capacity);
 	    return sb.ToString();
 	}
     }
@@ -68,20 +71,23 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
     public string name {
 	get {
 	    StringBuilder sb = new StringBuilder(256/*XXX*/);
-	    BLEPeripheralGetName(handle, sb, sb.Capacity);
+	    BLENativePeripheralGetName(handle, sb, sb.Capacity);
 	    return sb.ToString();
 	}
     }
 
     public BLEConnection Connect() {
-	BLEConnection conn = BLEConnect(context, this);
-	conn.context = context;
+	BLEConnection conn = BLENativeConnect(manager, this);
+	conn.manager = manager;
 	return conn;
     }
 
     protected override bool ReleaseHandle() {
+	Debug.Log("BLENativePeripheral: release " + this + ": " + 
+		  RuntimeHelpers.GetHashCode(this));
 	if (!this.IsInvalid) {
-	    BLEPeripheralRelease(handle);
+	    BLENativePeripheralRelease(handle);
+	    handle = IntPtr.Zero;
 	}
 	return true;
     }
@@ -90,10 +96,10 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
 [StructLayout (LayoutKind.Sequential)]
 public class BLEConnection : SafeHandleZeroOrMinusOneIsInvalid
 {
-    public BLEContext context; // XXX Fix visibility
+    public BLEManager manager; // XXX Fix visibility
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEDisconnect(BLEContext context, IntPtr connection);
+    private static extern void BLENativeDisconnect(BLEManager manager, IntPtr connection);
 
     // Called by the runtime
     public BLEConnection() : base(true) {
@@ -102,7 +108,7 @@ public class BLEConnection : SafeHandleZeroOrMinusOneIsInvalid
 
     public void Disconnect() {
 	Log("disconnect");
-	BLEDisconnect(context, handle);
+	BLENativeDisconnect(manager, handle);
 	handle = IntPtr.Zero;
     }
 
@@ -126,23 +132,23 @@ public class BLE : MonoBehaviour
     public static event discoveredPeripheral PeripheralDiscovered;
 
     delegate void BLEScanDeviceFoundCallback(
-	IntPtr context, IntPtr peripheral, IntPtr advertisementdata, long RSSI);
+	IntPtr manager, IntPtr peripheral, IntPtr advertisementdata, long RSSI);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEInitLog();
+    private static extern void BLENativeInitLog();
 
     [DllImport ("Unity3D_BLE")]
-    private static extern BLEContext BLECreateContext();
+    private static extern BLEManager BLENativeCreateManager();
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEScanStart(
-	BLEContext context, string serviceUUIDstring, BLEScanDeviceFoundCallback callback);
+    private static extern void BLENativeScanStart(
+	BLEManager manager, string serviceUUIDstring, BLEScanDeviceFoundCallback callback);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern void BLEScanStop(BLEContext context);
+    private static extern void BLENativeScanStop(BLEManager manager);
 
     [DllImport ("Unity3D_BLE")]
-    private static extern BLENativePeripheral BLECreatePeripheral(IntPtr peripheral);
+    private static extern BLENativePeripheral BLENativeCreatePeripheral(IntPtr peripheral);
 
     public bool scanning = false;
     protected bool _scanning = false;
@@ -156,15 +162,15 @@ public class BLE : MonoBehaviour
     protected string _serviceUUID;
 
     /**
-     * Context that holds pointers both to the native BLE and the C# BLE objects.
+     * Manager that holds pointers both to the native BLE and the C# BLE objects.
      */
-    BLEContext context;
+    BLEManager manager;
 
     void Start() {
 	Log("Initialise");
-	BLEInitLog();
-	context = BLECreateContext();
-	context.Initialise(this);
+	BLENativeInitLog();
+	manager = BLENativeCreateManager();
+	manager.Initialise(this);
 	Log("Initialise...done.");
     }
 
@@ -176,18 +182,18 @@ public class BLE : MonoBehaviour
 
     void OnDisable() {
 	Log("DeInitialise");
-	context.Dispose();
+	manager.Dispose();
     }
 
     [MonoPInvokeCallback (typeof(BLEScanDeviceFoundCallback))]
     static void ScanDeviceFound(IntPtr ctx, IntPtr peripheral, IntPtr add, long RSSI) {
 	GCHandle gch = GCHandle.FromIntPtr(ctx);
 	BLE ble = (BLE)gch.Target;
-	// Log("Device found: " + ble + ", " + peripheral + ", " + add + ", " + RSSI);
+	Log("Device found: " + ble + ", " + peripheral + ", " + add + ", " + RSSI);
 
 	if (PeripheralDiscovered != null) {
-	    BLENativePeripheral peri = BLECreatePeripheral(peripheral);
-	    peri.context = ble.context;
+	    BLENativePeripheral peri = BLENativeCreatePeripheral(peripheral);
+	    peri.manager = ble.manager;
 	    PeripheralDiscovered(peri);
 	}
     }
@@ -197,12 +203,12 @@ public class BLE : MonoBehaviour
 	// If currently scanning, stop.
 	if (_scanning) {
 	    Log("Stopping scan");
-	    BLEScanStop(context);
+	    BLENativeScanStop(manager);
 	}
 	// Then, if asked to scan, start again.
 	if (scanning) {
 	    Log("Starting scan for " + _serviceUUID);
-	    BLEScanStart(context, _serviceUUID, ScanDeviceFound);
+	    BLENativeScanStart(manager, _serviceUUID, ScanDeviceFound);
 	}
 	_scanning = scanning;
     }
