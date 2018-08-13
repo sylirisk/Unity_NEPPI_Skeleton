@@ -1,11 +1,11 @@
 using UnityEngine;
-using System.Collections;
 using System;
+using System.Collections;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.CompilerServices;
+using Microsoft.Win32.SafeHandles;
 
 [StructLayout (LayoutKind.Sequential)]
 public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid

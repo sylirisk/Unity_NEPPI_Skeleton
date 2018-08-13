@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.496413, b: 0.5748175, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -265,7 +265,6 @@ GameObject:
   m_Component:
   - component: {fileID: 506183740}
   - component: {fileID: 506183739}
-  - component: {fileID: 506183742}
   - component: {fileID: 506183741}
   - component: {fileID: 506183743}
   - component: {fileID: 506183744}
@@ -318,21 +317,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HTTPPath: /
   dataPath: /Scripts/uniwebserver/HTML/
---- !u!114 &506183742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 506183738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f3ff0e7e4ecb41f98ed55d084b7fc2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HTTPPath: /fw7
-  dataPath: /framework7
-  indexPath: /kitchen-sink/index.html
-  URL: <Start to assign>
 --- !u!114 &506183743
 MonoBehaviour:
   m_ObjectHideFlags: 0
