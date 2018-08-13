@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using System.Text;
+using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.CompilerServices;
@@ -10,12 +11,40 @@ using System.Runtime.CompilerServices;
 public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 {
     GCHandle gch;
+    Thread linuxHelperThread;
 
     [DllImport ("Unity3D_BLE")]
     private static extern void BLENativeInitialise(BLEManager self, IntPtr manager);
 
     [DllImport ("Unity3D_BLE")]
     private static extern void BLENativeDeInitialise(IntPtr native);
+
+#if UNITY_STANDALONE_LINUX || UNITY_TEST_THREADING
+    [DllImport ("Unity3D_BLE")]
+    private static extern void BLENativeLinuxHelper(BLEManager self);
+
+    protected void LinuxHelperLoop() {
+	Debug.Log("BLEManager: Linux thread starting");
+	try {
+	    while (true) {
+		BLENativeLinuxHelper(this);
+	    }
+	} catch (ThreadInterruptedException) {
+	    Debug.Log("BLEManager: Linux thread interrupted");
+	}
+	Debug.Log("BLEManager: Linux thread exiting");
+    }
+
+    protected void LinuxHelperTerminate() {
+	if (linuxHelperThread != null) {
+	    // Interrupt the Linux thread at next block
+	    linuxHelperThread.Interrupt();
+	    // Wait until the Linux thread exists
+	    linuxHelperThread.Join();
+	    linuxHelperThread = null;
+	}
+    }
+#endif
 
     // Called by the runtime
     public BLEManager() : base(true) {
@@ -24,10 +53,18 @@ public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
     public void Initialise(BLE cs) {
 	gch = GCHandle.Alloc(cs);
 	BLENativeInitialise(this, GCHandle.ToIntPtr(gch));
+#if UNITY_STANDALONE_LINUX || UNITY_TEST_THREADING
+	linuxHelperThread = new Thread(LinuxHelperLoop);
+	linuxHelperThread.Start();
+#endif
     }
+
 
     protected override bool ReleaseHandle() {
 	if (!this.IsInvalid) {
+#if UNITY_STANDALONE_LINUX || UNITY_TEST_THREADING
+	    LinuxHelperTerminate();
+#endif
 	    BLENativeDeInitialise(handle);
 	    handle = IntPtr.Zero;
 	}
@@ -83,7 +120,7 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
     }
 
     protected override bool ReleaseHandle() {
-	Debug.Log("BLENativePeripheral: release " + this + ": " + 
+	Debug.Log("BLENativePeripheral: release " + this + ": " +
 		  RuntimeHelpers.GetHashCode(this));
 	if (!this.IsInvalid) {
 	    BLENativePeripheralRelease(handle);
