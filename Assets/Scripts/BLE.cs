@@ -25,6 +25,7 @@ public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 
     protected void LinuxHelperLoop() {
 	Debug.Log("BLEManager: Linux thread starting");
+#if true
 	try {
 	    while (true) {
 		BLENativeLinuxHelper(this);
@@ -32,6 +33,7 @@ public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 	} catch (ThreadInterruptedException) {
 	    Debug.Log("BLEManager: Linux thread interrupted");
 	}
+#endif
 	Debug.Log("BLEManager: Linux thread exiting");
     }
 
@@ -93,8 +95,7 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
 
     // Called by the runtime when BLENativeCreatePeripheral has returned
     public BLENativePeripheral() : base(true) {
-	Debug.Log("BLENativePeripheral: constructor " + this + ": " +
-		  RuntimeHelpers.GetHashCode(this));
+	Debug.Log("BLENativePeripheral: constructor " + this + ": " + handle);
     }
 
     public string identifier {
@@ -120,8 +121,7 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
     }
 
     protected override bool ReleaseHandle() {
-	Debug.Log("BLENativePeripheral: release " + this + ": " +
-		  RuntimeHelpers.GetHashCode(this));
+	Debug.Log("BLENativePeripheral: release " + this + ": " + handle);
 	if (!this.IsInvalid) {
 	    BLENativePeripheralRelease(handle);
 	    handle = IntPtr.Zero;
@@ -187,6 +187,11 @@ public class BLE : MonoBehaviour
     [DllImport ("Unity3D_BLE")]
     private static extern BLENativePeripheral BLENativeCreatePeripheral(IntPtr peripheral);
 
+#if UNITY_STANDALONE_LINUX || UNITY_TEST_THREADING
+    [DllImport ("Unity3D_BLE")]
+    private static extern void BLENativeLinuxHelper(BLEManager manager);
+#endif
+    
     public bool scanning = false;
     protected bool _scanning = false;
 
@@ -226,7 +231,7 @@ public class BLE : MonoBehaviour
     static void ScanDeviceFound(IntPtr ctx, IntPtr peripheral, IntPtr add, long RSSI) {
 	GCHandle gch = GCHandle.FromIntPtr(ctx);
 	BLE ble = (BLE)gch.Target;
-	Log("Device found: " + ble + ", " + peripheral + ", " + add + ", " + RSSI);
+	// Log("Device found: " + ble + ", " + peripheral + ", " + add + ", " + RSSI);
 
 	if (PeripheralDiscovered != null) {
 	    BLENativePeripheral peri = BLENativeCreatePeripheral(peripheral);
