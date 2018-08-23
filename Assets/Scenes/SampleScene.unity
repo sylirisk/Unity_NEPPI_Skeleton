@@ -341,7 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 677689c4fbfa542d5bf28ae9cc3c6bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  device: 98:9E:63:62:37:BC
-  service: 180F
-  characteristic: 2a19
+  device: 00:7E:6B:5F:95:30
+  service: b131abdc-7195-142b-e012-0808817f198d
+  characteristic: b131bbd0-7195-142b-e012-0808817f198d
   connect: 0

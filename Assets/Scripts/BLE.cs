@@ -76,6 +76,7 @@ public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 
 [StructLayout (LayoutKind.Sequential)]
 public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
+
     public BLEManager manager; // XXX Fix visibility
 
     [DllImport ("Unity3D_BLE")]
@@ -95,7 +96,7 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
 
     // Called by the runtime when BLENativeCreatePeripheral has returned
     public BLENativePeripheral() : base(true) {
-	Debug.Log("BLENativePeripheral: constructor " + this + ": " + handle);
+	// Debug.Log("BLENativePeripheral: constructor " + this + ": " + handle);
     }
 
     public string identifier {
@@ -121,7 +122,7 @@ public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
     }
 
     protected override bool ReleaseHandle() {
-	Debug.Log("BLENativePeripheral: release " + this + ": " + handle);
+	// Debug.Log("BLENativePeripheral: release " + this + ": " + handle);
 	if (!this.IsInvalid) {
 	    BLENativePeripheralRelease(handle);
 	    handle = IntPtr.Zero;
