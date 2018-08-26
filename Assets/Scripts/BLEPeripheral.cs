@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 // XXX Refactor into a Neppi-specific file
 public struct NeppiValue {
     public ushort a_x;
-    ushort a_y;
-    ushort a_z;
+    public ushort a_y;
+    public ushort a_z;
     ushort g_x;
     ushort g_y;
     ushort g_z;
@@ -49,7 +49,9 @@ public class BLEPeripheral : MonoBehaviour
     public bool connect = false;
     protected bool _connect;
 
-    public int value = -1;
+    public int a_y = -1;
+    public int a_z = -1;
+    public int a_x = -1;
 
     protected BLENativePeripheral native;
     protected BLEConnection conn;
@@ -123,8 +125,9 @@ public class BLEPeripheral : MonoBehaviour
     }
 
     void CharacteristicNotify(string uuid, NeppiValue v) {
-	value = v.a_x;
-	Log("Notify: " + uuid + ", v=" + v.a_x);
+	a_x = v.a_x;
+	a_y = v.a_y;
+	a_z = v.a_z;
     }
 
     [MonoPInvokeCallback (typeof(BLECharacteristicUpdatedCallback))]
