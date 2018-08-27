@@ -5,16 +5,16 @@ using System.Runtime.InteropServices;
 
 // XXX Refactor into a Neppi-specific file
 public struct NeppiValue {
-    public ushort a_x;
-    public ushort a_y;
-    public ushort a_z;
-    ushort g_x;
-    ushort g_y;
-    ushort g_z;
-    ushort m_x;
-    ushort m_y;
-    ushort m_z;
-    ushort uuid; // XXX
+    public short a_x;
+    public short a_y;
+    public short a_z;
+    public short g_x;
+    public short g_y;
+    public short g_z;
+    public short m_x;
+    public short m_y;
+    public short m_z;
+    short uuid; // XXX
 }
 
 public class BLEPeripheral : MonoBehaviour
@@ -52,6 +52,14 @@ public class BLEPeripheral : MonoBehaviour
     public int a_y = -1;
     public int a_z = -1;
     public int a_x = -1;
+
+    public int g_y = -1;
+    public int g_z = -1;
+    public int g_x = -1;
+
+    public int m_y = -1;
+    public int m_z = -1;
+    public int m_x = -1;
 
     protected BLENativePeripheral native;
     protected BLEConnection conn;
@@ -128,6 +136,14 @@ public class BLEPeripheral : MonoBehaviour
 	a_x = v.a_x;
 	a_y = v.a_y;
 	a_z = v.a_z;
+
+	g_x = v.g_x;
+	g_y = v.g_y;
+	g_z = v.g_z;
+
+	m_x = v.m_x;
+	m_y = v.m_y;
+	m_z = v.m_z;
     }
 
     [MonoPInvokeCallback (typeof(BLECharacteristicUpdatedCallback))]
