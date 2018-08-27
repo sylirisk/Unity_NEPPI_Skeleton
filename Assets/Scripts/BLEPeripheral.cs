@@ -123,7 +123,7 @@ public class BLEPeripheral : MonoBehaviour
     }
 
     void PeripheralDiscovered(BLENativePeripheral p) {
-	Log("Discovered " + p.identifier);
+	Log("Discovered " + p.identifier + " name=" + p.name);
 	if (device == p.identifier) {
 	    if (native == null) {
 		Log("Adapted " + device);
