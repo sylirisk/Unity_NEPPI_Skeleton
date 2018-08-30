@@ -15,7 +15,7 @@ Command Line Setup
 ==================
 
 ```
-   $ git clone --recurse-submodules git@github.com:AaltoNEPPI/Unity_NEPPI_Skeleton.git
+   $ git clone --recurse-submodules git@github.com:sylirisk/Unity_NEPPI_Skeleton
 ```
 
 Github tool setup
