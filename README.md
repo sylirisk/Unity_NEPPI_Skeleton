@@ -1,8 +1,10 @@
-A Skeleton Unity3D (2018.1) project
+A Skeleton Unity3D (2018.2) project
 ===================================
 
-This is a Skeleton Unity3D project meant to be used at the Aalto
-University NEPPI course.
+This is a Unity3D project meant to be used at the Aalto University NEPPI course.
+
+Current version (30th Aug 2018) runs only on OSX. Also a commerctial AQUAS package is used, but not included here.
+
 
 As this project uses
 [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules),
