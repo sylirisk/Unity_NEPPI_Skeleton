@@ -343,8 +343,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   device: EFC09FC5-AC65-45BE-8414-233E67D2E203
   service: B131ABDC-7195-142B-E012-0808817F198D
-  characteristic: B131ABBB-7195-142B-E012-0808817F198D
+  charactMPU: b131abbb-7195-142b-e012-0808817f198d
+  charactColorHue: b131bbd0-7195-142b-e012-0808817f198d
+  charactColorValue: b131bbcf-7195-142b-e012-0808817f198d
+  charactState: b131cccf-7195-142b-e012-0808817f198d
   connect: 0
   a_y: -1
   a_z: -1
   a_x: -1
+  g_y: -1
+  g_z: -1
+  g_x: -1
+  m_y: -1
+  m_z: -1
+  m_x: -1
+  color: {r: 0, g: 0, b: 0, a: 0}

@@ -4,17 +4,24 @@ using System;
 using System.Runtime.InteropServices;
 
 // XXX Refactor into a Neppi-specific file
+[StructLayout(LayoutKind.Explicit)]
 public struct NeppiValue {
-    public short a_x;
-    public short a_y;
-    public short a_z;
-    public short g_x;
-    public short g_y;
-    public short g_z;
-    public short m_x;
-    public short m_y;
-    public short m_z;
-    short uuid; // XXX
+    // MPU characteristic
+    [FieldOffset( 0)] public short a_x;
+    [FieldOffset( 2)] public short a_y;
+    [FieldOffset( 4)] public short a_z;
+    [FieldOffset( 6)] public short g_x;
+    [FieldOffset( 8)] public short g_y;
+    [FieldOffset(10)] public short g_z;
+    [FieldOffset(12)] public short m_x;
+    [FieldOffset(14)] public short m_y;
+    [FieldOffset(16)] public short m_z;
+    [FieldOffset(18)] short uuid; // XXX
+    // Color characteristics
+    [FieldOffset(0)]  public short color_hue;
+    [FieldOffset(0)]  public byte  color_value;
+    // State characteristic
+    [FieldOffset(0)]  public byte  state;
 }
 
 public class BLEPeripheral : MonoBehaviour
@@ -42,13 +49,21 @@ public class BLEPeripheral : MonoBehaviour
     public string service = "b131abdc-7195-142b-e012-0808817f198d"; // Neppi
     protected string _service;
 
+    // Characteristics
     // XXX Should have an array of characteristics
-    public string characteristic = "b131bbd0-7195-142b-e012-0808817f198d"; // Neppi button
-    protected string _characteristic;
+    public string charactMPU        = "b131abbb-7195-142b-e012-0808817f198d"; // Neppi MPU
+    public string charactColorHue   = "b131bbd0-7195-142b-e012-0808817f198d";
+    public string charactColorValue = "b131bbcf-7195-142b-e012-0808817f198d";
+    public string charactState      = "b131cccf-7195-142b-e012-0808817f198d"; // Neppi state
+    protected string _charactMPU;
+    protected string _charactColorHue;
+    protected string _charactColorValue;
+    protected string _charactState;
 
     public bool connect = false;
     protected bool _connect;
 
+    // MPU values
     public int a_y = -1;
     public int a_z = -1;
     public int a_x = -1;
@@ -60,6 +75,9 @@ public class BLEPeripheral : MonoBehaviour
     public int m_y = -1;
     public int m_z = -1;
     public int m_x = -1;
+
+    // Color values
+    public Color color;
 
     protected BLENativePeripheral native;
     protected BLEConnection conn;
@@ -102,17 +120,26 @@ public class BLEPeripheral : MonoBehaviour
 	}
     }
 
-    protected void UpdateCharacteristics() {
-	if (_characteristic != characteristic && native != null) {
-	    if (_characteristic != null && _characteristic != "") {
-		BLENativePeripheralRemoveCharacteristic(native, _characteristic);
-		_characteristic = null;
+    protected string UpdateCharacteristic(string newUUID, string oldUUID) {
+	if (oldUUID != newUUID) {
+	    if (oldUUID != null && oldUUID != "") {
+		BLENativePeripheralRemoveCharacteristic(native, oldUUID);
+		return null;
 	    }
-	    if (characteristic != null && characteristic != "") {
+	    if (newUUID != null && newUUID != "") {
 		BLENativePeripheralAddCharacteristic(
-		    native, characteristic, characteristicUpdatedCallback);
+		    native, newUUID, characteristicUpdatedCallback);
 	    }
-	    _characteristic = characteristic;
+	}
+	return newUUID;
+    }
+
+    protected void UpdateCharacteristics() {
+	if (native != null) {
+	    _charactMPU        = UpdateCharacteristic(charactMPU, _charactMPU);
+	    _charactColorHue   = UpdateCharacteristic(charactColorHue, _charactColorHue);
+	    _charactColorValue = UpdateCharacteristic(charactColorValue, _charactColorValue);
+	    _charactState      = UpdateCharacteristic(charactState, _charactState);
 	}
     }
 
@@ -133,17 +160,38 @@ public class BLEPeripheral : MonoBehaviour
     }
 
     void CharacteristicNotify(string uuid, NeppiValue v) {
-	a_x = v.a_x;
-	a_y = v.a_y;
-	a_z = v.a_z;
+	if (String.Equals(uuid, charactMPU, StringComparison.OrdinalIgnoreCase)) {
+	    a_x = v.a_x;
+	    a_y = v.a_y;
+	    a_z = v.a_z;
 
-	g_x = v.g_x;
-	g_y = v.g_y;
-	g_z = v.g_z;
+	    g_x = v.g_x;
+	    g_y = v.g_y;
+	    g_z = v.g_z;
 
-	m_x = v.m_x;
-	m_y = v.m_y;
-	m_z = v.m_z;
+	    m_x = v.m_x;
+	    m_y = v.m_y;
+	    m_z = v.m_z;
+	    return;
+	}
+
+	if (String.Equals(uuid, charactColorHue, StringComparison.OrdinalIgnoreCase)) {
+	    float H, S, V;
+	    Color.RGBToHSV(color, out H, out S, out V);
+	    color = Color.HSVToRGB(((float)v.color_hue)/360, 1, V);
+	    return;
+	}
+
+	if (String.Equals(uuid, charactColorValue, StringComparison.OrdinalIgnoreCase)) {
+	    float H, S, V;
+	    Color.RGBToHSV(color, out H, out S, out V);
+	    color = Color.HSVToRGB(H, S, ((float)v.color_value)/100);
+	    return;
+	}
+
+	if (String.Equals(uuid, charactState, StringComparison.OrdinalIgnoreCase)) {
+	    // TBD
+	}
     }
 
     [MonoPInvokeCallback (typeof(BLECharacteristicUpdatedCallback))]
