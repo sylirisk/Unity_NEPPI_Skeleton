@@ -22,6 +22,7 @@ public struct NeppiValue {
     [FieldOffset(0)]  public byte  color_value;
     // State characteristic
     [FieldOffset(0)]  public byte  state;
+    [FieldOffset(1)]  public short button_adc;
 }
 
 public class BLEPeripheral : MonoBehaviour
@@ -77,10 +78,17 @@ public class BLEPeripheral : MonoBehaviour
     public int m_x = -1;
 
     // Color values
-    public Color color;
+    public Color color = Color.red;
 
     protected BLENativePeripheral native;
     protected BLEConnection conn;
+
+    // State
+    public enum State { INIT, OFF, SLEEP, ACTIVE, PAINTING };
+    public State state = State.INIT;
+
+    // Debugging: Button ADC
+    public short button_adc = -1;
     
     void OnEnable() {
 	BLE.PeripheralDiscovered += PeripheralDiscovered;
@@ -178,19 +186,25 @@ public class BLEPeripheral : MonoBehaviour
 	if (String.Equals(uuid, charactColorHue, StringComparison.OrdinalIgnoreCase)) {
 	    float H, S, V;
 	    Color.RGBToHSV(color, out H, out S, out V);
-	    color = Color.HSVToRGB(((float)v.color_hue)/360, 1, V);
+	    color = Color.HSVToRGB((float)(v.color_hue/360.0), 1.0f, V);
 	    return;
 	}
 
 	if (String.Equals(uuid, charactColorValue, StringComparison.OrdinalIgnoreCase)) {
+	    double value = ((double)v.color_value)/100.0;
+	    Debug.Assert(value >= 0.0 && value <= 1.0);
+	    // Brighten the intensity for Unity, as the unit is quite bright
+	    value = Math.Pow(value, 0.25);
+
 	    float H, S, V;
 	    Color.RGBToHSV(color, out H, out S, out V);
-	    color = Color.HSVToRGB(H, S, ((float)v.color_value)/100);
+	    color = Color.HSVToRGB(H, S, (float)value);
 	    return;
 	}
 
 	if (String.Equals(uuid, charactState, StringComparison.OrdinalIgnoreCase)) {
-	    // TBD
+	    state = (State)v.state;
+	    button_adc = v.button_adc;
 	}
     }
 
