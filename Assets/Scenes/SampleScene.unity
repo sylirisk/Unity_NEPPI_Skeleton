@@ -189,6 +189,7 @@ GameObject:
   - component: {fileID: 282840814}
   - component: {fileID: 282840813}
   - component: {fileID: 282840811}
+  - component: {fileID: 282840812}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -203,6 +204,36 @@ AudioListener:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_Enabled: 1
+--- !u!114 &282840812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 282840810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 677689c4fbfa542d5bf28ae9cc3c6bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  device: 
+  service: b131abdc-7195-142b-e012-0808817f198d
+  charactMPU: b131abbb-7195-142b-e012-0808817f198d
+  charactColorHue: b131bbd0-7195-142b-e012-0808817f198d
+  charactColorValue: b131bbcf-7195-142b-e012-0808817f198d
+  charactState: b131cccf-7195-142b-e012-0808817f198d
+  connect: 0
+  a_y: -1
+  a_z: -1
+  a_x: -1
+  g_y: -1
+  g_z: -1
+  g_x: -1
+  m_y: -1
+  m_z: -1
+  m_x: -1
+  color: {r: 1, g: 0, b: 0, a: 1}
+  state: 0
+  button_adc: -1
 --- !u!20 &282840813
 Camera:
   m_ObjectHideFlags: 0
@@ -358,3 +389,5 @@ MonoBehaviour:
   m_z: -1
   m_x: -1
   color: {r: 0, g: 0, b: 0, a: 0}
+  state: 0
+  button_adc: -1

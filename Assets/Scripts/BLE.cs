@@ -78,6 +78,7 @@ public class BLEManager : SafeHandleZeroOrMinusOneIsInvalid
 public class BLENativePeripheral : SafeHandleZeroOrMinusOneIsInvalid {
 
     public BLEManager manager; // XXX Fix visibility
+    public BLEPeripheral client; // XXX Fix visibility
 
     [DllImport ("Unity3D_BLE")]
     private static extern void BLENativePeripheralGetIdentifier(

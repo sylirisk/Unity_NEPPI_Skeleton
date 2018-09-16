@@ -27,14 +27,15 @@ public struct NeppiValue {
 
 public class BLEPeripheral : MonoBehaviour
 {
-    public delegate void BLECharacteristicUpdatedCallback(string uuid, IntPtr valuep);
+    public delegate void BLECharacteristicUpdatedCallback(
+	IntPtr native, string uuid, IntPtr valuep);
 
     public delegate void updateCharacteristic(string uuid, NeppiValue value);
-    public static event updateCharacteristic CharacteristicUpdated;
+    public event updateCharacteristic CharacteristicUpdated;
 
     [DllImport ("Unity3D_BLE")]
     private static extern void BLENativePeripheralSetService(
-	BLENativePeripheral native, string service);
+	BLENativePeripheral native, string service, IntPtr nativep);
 
     [DllImport ("Unity3D_BLE")]
     private static extern void BLENativePeripheralAddCharacteristic(
@@ -121,9 +122,12 @@ public class BLEPeripheral : MonoBehaviour
 	}
     }
 
+    GCHandle gch;
+
     protected void UpdateService() {
 	if (service != _service && native != null) {
-	    BLENativePeripheralSetService(native, service);
+	    gch = GCHandle.Alloc(native);
+	    BLENativePeripheralSetService(native, service, GCHandle.ToIntPtr(gch));
 	    _service = service;
 	}
     }
@@ -163,6 +167,7 @@ public class BLEPeripheral : MonoBehaviour
 	    if (native == null) {
 		Log("Adapted " + device);
 		native = p;
+		p.client = this;
 	    }
 	}
     }
@@ -209,14 +214,18 @@ public class BLEPeripheral : MonoBehaviour
     }
 
     [MonoPInvokeCallback (typeof(BLECharacteristicUpdatedCallback))]
-    static void characteristicUpdatedCallback(string uuid, IntPtr valuep) {
-
+    static void characteristicUpdatedCallback(IntPtr nativep, string uuid, IntPtr valuep) {
 	NeppiValue value =
 	    (NeppiValue)Marshal.PtrToStructure(valuep, typeof(NeppiValue));
 
-	if (CharacteristicUpdated != null) {
-	    CharacteristicUpdated(uuid, value);
+	GCHandle gch = GCHandle.FromIntPtr(nativep);
+	BLENativePeripheral native = (BLENativePeripheral)gch.Target;
+	BLEPeripheral peri = native.client;
+
+	if (peri != null && peri.CharacteristicUpdated != null) {
+	    peri.CharacteristicUpdated(uuid, value);
 	}
+
     }
 
     protected static void Log(string message) {
