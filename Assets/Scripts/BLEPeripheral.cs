@@ -85,7 +85,7 @@ public class BLEPeripheral : MonoBehaviour
     protected BLEConnection conn;
 
     // State
-    public enum State { INIT, OFF, SLEEP, ACTIVE, PAINTING };
+    public enum State { INIT, OFF, SLEEP, ACTIVE, PAINTING, BATTERY_LOW, CHARGING };
     public State state = State.INIT;
 
     // Debugging: Button ADC
