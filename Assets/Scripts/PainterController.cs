@@ -13,7 +13,7 @@ public class PainterController : MonoBehaviour {
     Material mat;
     Color baseColor = Color.yellow;
 
-    public bool button_down = false;
+    private BLEPeripheral BLEPeri;
 
     public int a_x = -1;
     public int a_y = -1;
@@ -38,20 +38,24 @@ public class PainterController : MonoBehaviour {
 
     private bool deviceShaken = false;
 
+    private float timeSinceUpdate = 0;
+
     // This is executed when the script becomes active in Unity
     void OnEnable()
     {
-        BLEPeripheral.CharacteristicUpdated += IOTDeviceListener; // add our event listener
+        //BLEPeri.CharacteristicUpdated += IOTDeviceListener; // add our event listener
     }
 
     // This is executed when the script becomes inactive in Unity
     private void OnDisable()
     {
-        BLEPeripheral.CharacteristicUpdated += IOTDeviceListener; // remove our event listener
+        //BLEPeri.CharacteristicUpdated -= IOTDeviceListener; // remove our event listener
     }
 
     void Start()
     {
+        BLEPeri = GetComponent<BLEPeripheral>();
+
         rb = GetComponent<Rigidbody>();
         Renderer renderer = GetComponent<Renderer>();
         mat = renderer.material;
@@ -60,17 +64,27 @@ public class PainterController : MonoBehaviour {
 
     private void Update()
     {
-        float emission = Mathf.PingPong(Time.time, 1.0f);
+        if (timeSinceUpdate < 0.2f) {
+            timeSinceUpdate += Time.deltaTime;
+        } else {
+            // this happens every 200 ms 
+            timeSinceUpdate = 0.0f;
 
-        Color finalColor = baseColor * Mathf.LinearToGammaSpace(emission);
-        mat.SetColor("_EmissionColor", finalColor);
+            UpdatePainterForces();
 
-        if (deviceShaken) {
-            deviceShaken = false;
-            if (AddSunEvent != null)
-                AddSunEvent();
+            if (deviceShaken)
+            {
+                deviceShaken = false;
+                if (AddSunEvent != null)
+                    AddSunEvent();
+            }
+
         }
 
+        float emission = Mathf.PingPong(Time.time, 1.0f);
+        Color finalColor = baseColor * Mathf.LinearToGammaSpace(emission);
+        mat.SetColor("_EmissionColor", finalColor);
+       
     }
 
     private void FixedUpdate()
@@ -80,10 +94,16 @@ public class PainterController : MonoBehaviour {
 
     void UpdatePainterForces() 
     {
-        if (button_down) {
+        if (BLEPeri.state == BLEPeripheral.State.PAINTING) 
+        {
+
+            mat.SetColor("_EmissionColor", BLEPeri.color);
+            baseColor = BLEPeri.color;
+            tr.material.SetColor("_EmissionColor", baseColor);
+
             if (lift_force < 100) lift_force += 3.0f;
 
-            float temp_x = g_x / 50;
+            float temp_x = BLEPeri.g_x / 50;
 
             if (temp_x > 100) x_force = 100;
             else if (temp_x < -100) x_force = -100;
@@ -92,7 +112,7 @@ public class PainterController : MonoBehaviour {
             if (x_force > 100) x_force = 100;
             else if (x_force < -100) x_force = -100;
 
-            float temp_y = g_y / 50;
+            float temp_y = BLEPeri.g_y / 50;
 
             if (temp_y > 100) y_force = 100;
             else if (temp_y < -100) y_force = -100;
@@ -103,22 +123,15 @@ public class PainterController : MonoBehaviour {
 
             mat.EnableKeyword("_EMISSION");
 
-        }
-        else {
+        } 
+        else 
+        {
             lift_force = 0;
             x_force = 0;
             y_force = 0;
 
             mat.DisableKeyword("_EMISSION");
         }
-    }
-
-    void UpdateColor(int hue) // Expecting 0-360 
-    {
-        float trueHue = (float)hue / 360;
-        print("Updating color, hue " + hue + " trueHue: "+trueHue);
-        baseColor = Color.HSVToRGB(trueHue, 1.0f, 1.0f);
-        tr.material.SetColor("_EmissionColor",baseColor);
     }
 
     bool ShakeCheck() // if accelerator trend over shaking margin, cast event to sun
@@ -138,9 +151,9 @@ public class PainterController : MonoBehaviour {
         y_i = y_i / shakeStackY.Length;
         z_i = z_i / shakeStackZ.Length;
 
-        float x_diff = x_i - a_x;
-        float y_diff = y_i - a_y;
-        float z_diff = z_i - a_z;
+        float x_diff = x_i - BLEPeri.a_x;
+        float y_diff = y_i - BLEPeri.a_y;
+        float z_diff = z_i - BLEPeri.a_z;
 
         if (x_diff < -1000 || x_diff > 1000) // the value 1000 is empirically tested, don't change!
         {
@@ -158,38 +171,11 @@ public class PainterController : MonoBehaviour {
         // store the most recent values to shakeStack
         shakeStackIndex++;
         if (shakeStackIndex >= 5) shakeStackIndex = 0;
-        shakeStackX[shakeStackIndex] = a_x;
-        shakeStackY[shakeStackIndex] = a_y;
-        shakeStackZ[shakeStackIndex] = a_z;
+        shakeStackX[shakeStackIndex] = BLEPeri.a_x;
+        shakeStackY[shakeStackIndex] = BLEPeri.a_y;
+        shakeStackZ[shakeStackIndex] = BLEPeri.a_z;
 
         return shaken;
     }
 
-    void IOTDeviceListener(string uuid, NeppiValue v)
-    {
-        a_x = v.a_x;
-        a_y = v.a_y;
-        a_z = v.a_z;
-        deviceShaken = ShakeCheck();
-
-        g_x = v.g_x;
-        g_y = v.g_y;
-        g_z = v.g_z;
-        UpdatePainterForces();
-
-        m_x = v.m_x;
-        m_y = v.m_y;
-        m_z = v.m_z;
-
-        // Simulates device button press
-        if (Input.GetKey(KeyCode.Space)) button_down = true;    
-        else button_down = false;
-
-        // reset colour with R-key
-        if (Input.GetKey(KeyCode.R)) 
-        {
-            int i = Random.Range(0, 360); // fakes the 'hue' from device
-            UpdateColor(i);
-        }
-    }
 }
