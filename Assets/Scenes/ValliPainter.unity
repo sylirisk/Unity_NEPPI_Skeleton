@@ -123,7 +123,6 @@ GameObject:
   - component: {fileID: 178380546}
   - component: {fileID: 178380548}
   - component: {fileID: 178380547}
-  - component: {fileID: 178380549}
   m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
@@ -152,7 +151,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 178380545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b40201a6fef74ad990c49b2d072dbcd, type: 3}
+  m_Script: {fileID: 11500000, guid: 79b1072fa1de04aeaaa05a8d5a627f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!108 &178380548
@@ -192,17 +191,6 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &178380549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 178380545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edd80f21fa8474af0a6c5f7ac6a053f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &412794273 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 474b62209d2ba4161a0f1cb3d89b4cbc,
@@ -233,6 +221,7 @@ GameObject:
   - component: {fileID: 854475123}
   - component: {fileID: 854475122}
   - component: {fileID: 854475125}
+  - component: {fileID: 854475126}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -308,12 +297,97 @@ MonoBehaviour:
   m_GameObject: {fileID: 854475121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15382820b29184deca8586b3d8d8c041, type: 3}
+  m_Script: {fileID: 11500000, guid: 02ea90dcfe7634748aa50af6e7ca2b52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   force_x: 0
   force_y: 0
   force_z: 0
+--- !u!114 &854475126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 854475121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5fdc33fffc1446fb3db89faf3de93d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inPort: 6969
+  outIP: 127.0.0.1
+  outPort: 6161
+--- !u!1 &994952399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994952401}
+  - component: {fileID: 994952402}
+  - component: {fileID: 994952400}
+  m_Layer: 0
+  m_Name: IoTDevice_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &994952400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994952399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 677689c4fbfa542d5bf28ae9cc3c6bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  device: E14C6039-DDFF-4971-9660-E46895535422
+  service: b131abdc-7195-142b-e012-0808817f198d
+  charactMPU: b131abbb-7195-142b-e012-0808817f198d
+  charactColorHue: b131bbd0-7195-142b-e012-0808817f198d
+  charactColorValue: b131bbcf-7195-142b-e012-0808817f198d
+  charactState: b131cccf-7195-142b-e012-0808817f198d
+  connect: 0
+  a_y: -1
+  a_z: -1
+  a_x: -1
+  g_y: -1
+  g_z: -1
+  g_x: -1
+  m_y: -1
+  m_z: -1
+  m_x: -1
+  color: {r: 0, g: 0, b: 0, a: 0}
+--- !u!4 &994952401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994952399}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &994952402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994952399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7090100b61cf64897b66436ebae0f66c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scanning: 1
+  serviceUUID: 
 --- !u!1 &1054688031
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +470,7 @@ GameObject:
   - component: {fileID: 1078782811}
   - component: {fileID: 1078782810}
   - component: {fileID: 1078782812}
+  - component: {fileID: 1078782813}
   m_Layer: 0
   m_Name: SunVisualisation
   m_TagString: Untagged
@@ -461,12 +536,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 1078782809}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d24b66e006ae4c56a287864c00a596a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9234e497c85a9456b9d82b2aa0381861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  osc: {fileID: 0}
   sunVisualisation: {fileID: 0}
   sunriseSpeed: 1
+  sunBrightness: 1.2
+  temp: 1
   timeSinceLastSunriseRequest: 0
+--- !u!114 &1078782813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1078782809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5fdc33fffc1446fb3db89faf3de93d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inPort: 6969
+  outIP: 127.0.0.1
+  outPort: 6161
 --- !u!1 &1593878711
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,14 +650,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1675466328}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 677689c4fbfa542d5bf28ae9cc3c6bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  device: 16036996-E7F2-471A-BE80-DA7CBEA69E57
+  device: E14C6039-DDFF-4971-9660-E46895535422
   service: B131ABDC-7195-142B-E012-0808817F198D
-  characteristic: B131ABBB-7195-142B-E012-0808817F198D
+  charactMPU: b131abbb-7195-142b-e012-0808817f198d
+  charactColorHue: b131bbd0-7195-142b-e012-0808817f198d
+  charactColorValue: b131bbcf-7195-142b-e012-0808817f198d
+  charactState: b131cccf-7195-142b-e012-0808817f198d
   connect: 0
   a_y: -1
   a_z: -1
@@ -576,13 +671,14 @@ MonoBehaviour:
   m_y: -1
   m_z: -1
   m_x: -1
+  color: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &1675466330
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1675466328}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7090100b61cf64897b66436ebae0f66c, type: 3}
   m_Name: 
@@ -806,7 +902,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2107595414}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4509bcece1cb4d3299d8d0db60030d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8adecb3b3b0894553b0b4f9d806a3843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   thrust: 1
